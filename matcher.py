@@ -2,7 +2,7 @@
 #   Program to match surevy takers by similar answers
 
 # Import Libraries
-import csv
+import csv, sys
 
 # Responses
 #   This is a class representes all of the responses
@@ -159,7 +159,13 @@ def match_email(x, y):
 
 # Main
 if __name__ == '__main__':
-    # Read CSV
+    # Get CSV file name
+    if len(sys.argv) == 2:
+        file_name = sys.argv[1]
+    else:
+        file_name = input("Input csv file name: ")
+
+    # Read CSV     
     csv_responses = csv.reader(open("../responses2.csv"))
 
     # Create a list of people
