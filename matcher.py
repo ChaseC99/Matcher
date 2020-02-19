@@ -4,6 +4,64 @@
 # Import Libraries
 import csv, sys
 
+# Make Matches
+#   This is the algorithm that matches each person in the list to their highest available preference
+#
+#   Params
+#       prefs: {str: [str]}  
+#           - Preference of people to be matched
+#           - Each key in the dict is a person to be matched.
+#           - Each value in the dict is an ordered list of people, ranked from first to last preference
+#
+#   Returns
+#       List of 2-tuples 
+def make_matches(prefs: {str: [str]}):
+    # Empty list to hold matches
+    matches = []
+    
+    # Get all of the people in the dict
+    people = list(prefs.keys())
+
+    # Index in the list
+    i=0
+
+    # As long as there is more than one person in the list,
+    # continue running the algorithm
+    while len(people) > 1:
+        p = people[i]                               # Pull a person from the list at the current index
+        top_pick = prefs[p][0]                      # Get that person's top prefenced
+        top_pick_of_top_pick = prefs[top_pick][0]   # Get the top pick of the top pick
+
+        # If the top pick also wants the person, match them
+        if p == top_pick_of_top_pick:
+            # Add the match to matches
+            matches.append((p, top_pick)) 
+            
+            # Remove both from the pool of people 
+            people.remove(p)        # Remove p from the list
+            people.remove(top_pick) # Remove top pick from the list
+            del prefs[p]            # Delete p from the dict
+            del prefs[top_pick]     # Delete top pick from the dict
+            
+            # Remove both from ever other person's preference list
+            for key in prefs:
+                prefs[key].remove(p)
+                prefs[key].remove(top_pick)
+        else:
+            # If the top pick doesn't have the person as first choice,
+            # Do nothing and move onto the next person
+            i += 1
+    
+        # If the end of the list is reached, 
+        # loop back around to the beginning
+        if i == len(people):
+            i = 0
+
+    # Return all of the matches
+    return matches 
+
+
+
 # Responses
 #   This is a class representes all of the responses
 #
@@ -76,62 +134,6 @@ class Responses:
         return self.id + ": " + str(self.answers) + '\nMatches: ' + str(self.matches_detailed)
 
 
-# Make Matches
-#   This is the algorithm that matches each person in the list to their highest available preference
-#
-#   Params
-#       prefs: {str: [str]}  
-#           - Preference of people to be matched
-#           - Each key in the dict is a person to be matched.
-#           - Each value in the dict is an ordered list of people, ranked from first to last preference
-#
-#   Returns
-#       List of 2-tuples 
-def make_matches(prefs: {str: [str]}):
-    # Empty list to hold matches
-    matches = []
-    
-    # Get all of the people in the dict
-    people = list(prefs.keys())
-
-    # Index in the list
-    i=0
-
-    # As long as there is more than one person in the list,
-    # continue running the algorithm
-    while len(people) > 1:
-        p = people[i]                               # Pull a person from the list at the current index
-        top_pick = prefs[p][0]                      # Get that person's top prefenced
-        top_pick_of_top_pick = prefs[top_pick][0]   # Get the top pick of the top pick
-
-        # If the top pick also wants the person, match them
-        if p == top_pick_of_top_pick:
-            # Add the match to matches
-            matches.append((p, top_pick)) 
-            
-            # Remove both from the pool of people 
-            people.remove(p)        # Remove p from the list
-            people.remove(top_pick) # Remove top pick from the list
-            del prefs[p]            # Delete p from the dict
-            del prefs[top_pick]     # Delete top pick from the dict
-            
-            # Remove both from ever other person's preference list
-            for key in prefs:
-                prefs[key].remove(p)
-                prefs[key].remove(top_pick)
-        else:
-            # If the top pick doesn't have the person as first choice,
-            # Do nothing and move onto the next person
-            i += 1
-    
-        # If the end of the list is reached, 
-        # loop back around to the beginning
-        if i == len(people):
-            i = 0
-
-    # Return all of the matches
-    return matches 
-
 
 # Match Email
 #   This function was to output the matches in a format that could be emailed out to the people
@@ -156,6 +158,7 @@ def match_email(x, y):
             print(f'    {y.id:<{space}} - {y.answers[i]}')
             print()
     print("----------------")
+
 
 # Main
 if __name__ == '__main__':
