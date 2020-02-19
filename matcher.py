@@ -169,7 +169,7 @@ if __name__ == '__main__':
         file_name = input("Input csv file name: ")
 
     # Read CSV     
-    csv_responses = csv.reader(open("../responses2.csv"))
+    csv_responses = csv.reader(open(file_name))
 
     # Create a list of people
     people = []
