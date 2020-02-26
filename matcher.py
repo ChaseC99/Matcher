@@ -54,7 +54,7 @@ def make_matches(prefs: {str: [str]}):
     
         # If the end of the list is reached, 
         # loop back around to the beginning
-        if i == len(people):
+        if i >= len(people):
             i = 0
 
     # Return all of the matches
@@ -143,21 +143,24 @@ def match_email(x, y):
     print(y.answers[2])
     print()
     print("-------------------------------------------------")
-    print("Mesa Match!")
+    print("*Mesa Match* :two_hearts:")
     print(x.id + " and " + y.id)
+    print("_Congratulations, you two were matched!_")
     print("-------------------------------------------------")
     print()
     print("These were your responses. . .")
     print()
     space = max(len(x.id), len(y.id))
     for i in range(len(x.answers)):
-        if i == 3 or i not in x.ignore_indexes:
-            if i == 20: continue
-            print(questions[i])
-            print(f'    {x.id:<{space}} - {x.answers[i]}')
-            print(f'    {y.id:<{space}} - {y.answers[i]}')
+        if i not in x.ignore_indexes:
+            if x.answers[i] == y.answers[i]: print(":white_check_mark: ", end="")
+            else: print(":x: ", end="")
+            print("_" + questions[i] + "_",)            
+            print(f'>{x.id:<{space*2}} - {x.answers[i]}')
+            print(f'>{y.id:<{space*2}} - {y.answers[i]}')
             print()
     print("----------------")
+    print("If you meet up, make sure to take a picture and post it in #mesa-meetups!")
 
 
 # Main
@@ -174,7 +177,7 @@ if __name__ == '__main__':
     # Create a list of people
     people = []
     for csv_response in csv_responses:
-        response = Responses(csv_response, 1, [0, 1, 2, 3, 7, 19])
+        response = Responses(csv_response, 1, [])
         people.append(response)
     
     # Pull the questions out of the responses and delete them
